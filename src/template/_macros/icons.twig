@@ -1,0 +1,10 @@
+{% macro list_icon(list_icons, activityActive) %}
+  {% for icon in list_icons %}
+  {% set active = (activityActive == icon.timeJourney) ? "active" : "" %}
+
+    <span class="card__icon {{active}}" data-toggle="card" data-type="{{icon.name}}">
+      <img src="./src/img/{{icon.name}}/{{icon.name}}.svg" alt="">
+    </span>
+    
+  {% endfor %}
+{% endmacro %}

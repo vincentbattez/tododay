@@ -1,0 +1,279 @@
+{% extends "layout.twig" %}
+
+{% set todayHours = "now"|date('G') %}
+
+{%
+  set currentPage = {
+    title: 'Tododay',
+    description: 'description de la page',
+    bodyClass: 'homepage',
+    journee: (todayHours >= 0 and todayHours < 8) ? "bedTime":(todayHours >= 8 and todayHours < 18) ? "workTime":(todayHours >= 18 and todayHours < 19) ? "sportTime":(todayHours >= 19 and todayHours < 21) ? "cookingTime":(todayHours >= 21 and todayHours <= 23) ? "eveningTime"
+  }
+%}
+
+{%
+  set list_days = {
+    lundi: {
+      day: 1,
+      type: 'work',
+      activities: {
+        work: {
+          name: "work",
+          timeJourney: "workTime",
+        }, 
+        sport: {
+          name: "sport",
+          timeJourney: "sportTime",
+          exercice_name: "La défonce",
+          exercice_slug: "la_defonce",
+          exercice_zone_muscle: [
+            'pectoraux',
+            'biceps',
+            'abdominaux'
+          ],
+          exercice_step: [
+            "Echauffement: 1min",
+            "Pectoraux",
+            "20x4 Pompes ",
+            "Biceps",
+            "20x4 Curl avec haltères",
+            "Abdominaux",
+            "20x4 Curl avec haltères"
+          ]
+        }, 
+        cook: {
+          name: "cook",
+          timeJourney: "cookingTime",
+          recette_icon: "pasta",
+          recette_name: "Pates carbo",
+          recette_time: 900,
+          recette_ingrediants: {
+            1: {
+              ingrediant_name: "pâtes",
+              ingrediant_quantite: 500,
+              ingrediant_unite: "g",
+            },
+            2: {
+              ingrediant_name: "lardons",
+              ingrediant_quantite: 90,
+              ingrediant_unite: "g",
+            },
+            3: {
+              ingrediant_name: "sel",
+              ingrediant_quantite: NULL,
+              ingrediant_unite: NULL,
+            }
+          },
+          recette_preparation: [
+            "Faire bouillir l’eau des pâtes",
+            "Ajouter le sel",
+            "Attendre 5min",
+            "Faire cuire les lardons",
+            "Ajouter la créme fraiche"
+          ],
+          recette_minuteur: 720
+        }
+      }
+    },
+    mardi: {
+      day: 2,
+      type: 'work',
+      activities: {
+        work: {
+          name: "work",
+          timeJourney: "workTime",
+        }, 
+        cook: {
+          name: "cook",
+          timeJourney: "cookingTime",
+        }
+      }
+    },
+    mercredi: {
+      day: 3,
+      type: 'work',
+      activities: {
+        work: {
+          name: "work",
+          timeJourney: "workTime",
+        }, 
+        sport: {
+          name: "sport",
+          timeJourney: "sportTime",
+        }, 
+        cook: {
+          name: "cook",
+          timeJourney: "cookingTime",
+          recette_icon: "pasta",
+          recette_name: "Pates carbo",
+          recette_duration: 900,
+          recette_ingrediants: {
+            1: {
+              ingrediant_name: "pasta",
+              ingrediant_quantite: 500,
+              ingrediant_unite: "g",
+            },
+            2: {
+              ingrediant_name: "lardons",
+              ingrediant_quantite: 90,
+              ingrediant_unite: "g",
+            },
+            3: {
+              ingrediant_name: "sel",
+              ingrediant_quantite: NULL,
+              ingrediant_unite: NULL,
+            }
+          },
+          recette_preparation: [
+            "Faire bouillir l’eau des pâtes",
+            "Ajouter le sel",
+            "Attendre 5min",
+            "Faire cuire les lardons",
+            "Ajouter la créme fraiche"
+          ],
+          recette_minuteur: 420
+        }
+      }
+    },
+    jeudi: {
+      day: 4,
+      type: 'school',
+      activities: {
+        work: {
+          name: "work",
+          timeJourney: "workTime",
+        }, 
+        cook: {
+          name: "cook",
+          timeJourney: "cookingTime",
+          recette_icon: "pasta",
+          recette_name: "Pates carbo",
+          recette_duration: 900,
+          recette_ingrediants: {
+            1: {
+              ingrediant_name: "pasta",
+              ingrediant_quantite: 500,
+              ingrediant_unite: "g",
+            },
+            2: {
+              ingrediant_name: "lardons",
+              ingrediant_quantite: 90,
+              ingrediant_unite: "g",
+            },
+            3: {
+              ingrediant_name: "sel",
+              ingrediant_quantite: NULL,
+              ingrediant_unite: NULL,
+            }
+          },
+          recette_preparation: [
+            "Faire bouillir l’eau des pâtes",
+            "Ajouter le sel",
+            "Attendre 5min",
+            "Faire cuire les lardons",
+            "Ajouter la créme fraiche"
+          ],
+          recette_minuteur: 420
+        }
+      }
+    },
+    vendredi: {
+      day: 5,
+      type: 'school',
+      activities: {
+        work: {
+          name: "school",
+          timeJourney: "workTime",
+        },
+        sport: {
+          name: "sport",
+          timeJourney: "sportTime",
+        },
+        cook: {
+          name: "cook",
+          timeJourney: "cookingTime",
+          recette_icon: "pasta",
+          recette_name: "Pates carbo",
+          recette_duration: 900,
+          recette_ingrediants: {
+            1: {
+              ingrediant_name: "pasta",
+              ingrediant_quantite: 500,
+              ingrediant_unite: "g",
+            },
+            2: {
+              ingrediant_name: "lardons",
+              ingrediant_quantite: 90,
+              ingrediant_unite: "g",
+            },
+            3: {
+              ingrediant_name: "sel",
+              ingrediant_quantite: NULL,
+              ingrediant_unite: NULL,
+            }
+          },
+          recette_preparation: [
+            "Faire bouillir l’eau des pâtes",
+            "Ajouter le sel",
+            "Attendre 5min",
+            "Faire cuire les lardons",
+            "Ajouter la créme fraiche"
+          ],
+          recette_minuteur: 420
+        }
+      }
+    },
+    samedi: {
+      day: 6,
+      type: 'school card--weekend',
+      activities: {
+        work: {
+          name: "school",
+          timeJourney: "workTime"
+        },
+        sport: {
+          name: "weekend",
+          timeJourney: "homeTime"
+        },
+      }
+    },
+    dimanche: {
+      day: 7,
+      type: 'weekend',
+      activities: {
+        sport: {
+          name: "weekend",
+          timeJourney: "homeTime",
+        }
+      }
+    }
+  }
+%}
+
+{% import "./_macros/cards.twig" as cards %}
+
+{# {% block style %}
+<style>
+</style>
+{% endblock %} #}
+
+{% block body %}
+  <section class="cards-container">
+    {% for day in list_days %}
+      {{
+        cards.card(
+          day.type,
+          day.day,
+          day.activities
+        )
+      }}
+    {% endfor %}
+
+  </section>
+{% endblock %}
+
+
+{# {% block script %}
+<script>
+</script>
+{% endblock %} #}

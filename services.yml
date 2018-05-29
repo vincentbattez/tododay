@@ -1,0 +1,7 @@
+#enable intl extensions
+services:
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+        locale: fr

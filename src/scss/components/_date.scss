@@ -1,0 +1,15 @@
+.date{
+  width: 100%;
+  text-align: center;
+  color: white;
+  margin-bottom: 100px;
+  margin-top: 100px;
+  &__heure{
+    @include font-size(130px);
+    margin-bottom: 0;
+  }
+  &__jour{
+    @include font-size(46px);
+    margin-top: 0;
+  }
+}

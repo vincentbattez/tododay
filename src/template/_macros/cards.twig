@@ -1,0 +1,361 @@
+<!--____________________->
+      CARD
+<-______________________-->
+{% macro card(type, day, activities) %}
+  {# IMPORTS #}
+  {% import _self as content %}
+  {% import "./_macros/icons.twig" as icons %}
+
+  {# VARIABLES #}
+  {% set today = today|date('N')|number_format %}
+  {% set todayHours = "now"|date('G') %}
+  {# Return
+    1
+    7
+  #}
+  {% set week = day - today %}
+  {# Return
+    -6
+     6
+  #}
+  {% set isToday = (today == day) ? true : false %}
+  {# Return
+    @true  true  
+    @false false
+  #}
+  {% set date = (isToday) ? 
+    card__title|date_modify("+" ~ week ~ " day")|date('l d')
+    :
+    card__title|date_modify("+" ~ week ~ " day")|date('D d')
+  %}
+  {# Return
+    @true  Wed  
+    @false Wednesday
+  #}
+{% set cardType %}
+{{(week < 0) ? "passed" : type|default('passed')}}
+{{(week == 0) ? " active"}}
+{% endset %}
+{# Return
+  passed  
+  work active
+#}
+{% set journee %}{{(todayHours >= 0 and todayHours <= 8) ? "bedTime":(todayHours >= 9 and todayHours < 18) ? "workTime":(todayHours >= 18 and todayHours < 19) ? "sportTime":(todayHours >= 19 and todayHours < 21) ? "cookingTime":(todayHours >= 21 and todayHours <= 23) ? "eveningTime"}}{% endset %}
+{# Return
+  Entre 0h et 8h   = bedTime
+  Entre 8h et 18h  = workTime
+  Entre 18h et 19h = sportTime
+  Entre 19h et 21h = cookingTime
+  Entre 21h et 0h  = eveningTime
+#}
+
+  <article class="card card--{{cardType}}">
+    <header class="card__header">
+      <div class="card__list-icon">
+          {{icons.list_icon(activities, journee)}}
+      </div>
+      <h4 class="card__title">
+        {{date}}
+      </h4>
+    </header>
+    <div class="card__content">
+      <div class="card__list-icon">
+        {{icons.list_icon(activities)}}
+      </div>
+      <!--__________________ 
+        OPEN
+      __________________-->
+      {% if isToday %}
+        {% if journee == "cookingTime" %}
+          <div class="open" data-opener="cook">
+            {{content.card_content__cook(activities.cook)}}
+          </div>
+        {% elseif journee == "sportTime" %}
+            <div class="open" data-opener="sport">
+              {{content.card_content__sport(activities.sport)}}
+            </div>
+        {% elseif journee == "workTime" %}
+            <div class="open" data-opener="work">
+              {{content.card_content__work(activities.work.name, journee)}}
+            </div>
+        {% elseif journee == "eveningTime" %}
+            <div class="open" data-opener="evening">
+              {{content.card_content__work('evening', journee)}}
+            </div>
+        {% else %}
+          <div class="open" data-opener="night">
+            {{content.card_content__work('bedTime', journee)}}
+          </div>
+        {% endif %}
+      {% endif %}
+      <!--__________________ 
+        CLOSED
+      __________________-->
+      {% if isToday %}
+        {% if journee != "cookingTime" %}
+          <div class="closed cookingTime_container" data-opener="cook">
+            {{content.card_content__cook(activities.cook)}}
+          </div>
+        {% endif %}
+
+        {% if journee != "sportTime" %}
+          <div class="closed sportTime_container" data-opener="sport">
+            {{content.card_content__sport(activities.sport)}}
+          </div>
+        {% endif %}
+
+          {% if journee != "workTime" %}
+            <div class="closed workTime_container" data-opener="work">
+              {{content.card_content__work(activities.work.name, journee)}}
+            </div>
+        {% endif %}
+
+        {% if journee != "eveningTime" %}
+          <div class="closed eveningTime_container" data-opener="evening">
+            {{content.card_content__work('evening', journee)}}
+          </div>
+          {% endif %}
+          
+        <div class="closed bedTime_container" data-opener="night">
+          {{content.card_content__work('bedTime', journee)}}
+        </div>
+      {% endif %}
+    </div>
+  </article>
+
+{% endmacro %}
+
+
+<!--____________________->
+      COOK
+<-______________________-->
+{% macro card_content__cook(cook) %}
+  {# {{ "now"|date('G:i:s')|date_modify("+" ~ cook.recette_minuteur ~ " day")|date('G:i:s') }} #}
+
+  {# Parent: .card__content #}
+  {# HEADER #}
+  <div class="content__header">
+    <div class="content__header-container">
+      <img src="./src/img/cook/{{cook.recette_icon}}.svg" alt="">
+      <div class="content__header-title-container">
+        <span class="content__header-title ff-title">{{cook.recette_name}}</span>
+        <span class="content__header-time"><img src="./src/img/svg/clock.svg" alt="">{{cook.recette_duration|date('i:s')}}</span>
+      </div>
+    </div>
+  </div>
+  {# CONTENT #}
+  <div class="content__content">
+    {# RIGHT #}
+    <div class="content__right">
+      <h3 class="content__title ff-title">Ingrédiant</h3>
+      <ul class="content__list">
+        {% for ingrediant in cook.recette_ingrediants %}
+          <li class="content__list_item">
+            <img src="./src/img/cook/{{ingrediant.ingrediant_name}}.jpg" alt="">{{ingrediant.ingrediant_quantite}}{{ingrediant.ingrediant_unite}}{{(ingrediant.ingrediant_unite != "") ? " de "}}{{ingrediant.ingrediant_name}}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {# LEFT #}
+    <div class="content__left">
+      <h3 class="content__title ff-title">Préparation</h3>
+      <ul class="content__list bg-lines">
+        {% for etape in cook.recette_preparation %}
+          <li class="content__list_item">{{etape}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {# FOOTER #}
+  <div class="content__footer">
+      <h3 class="footer__title ff-title">Minuteur</h3>
+      <div class="content__footer-container">
+        <img src="./src/img/cook/minuteur.svg" class="svg minuteur-icon minuteur--cook" alt="">
+        <div class="content__footer-title-container">
+          <span class="content__footer-title">{{cook.recette_minuteur|date('i:s')}}</span>
+          <span class="content__footer-time">{{minuteur_result|date('G:i:s')}}</span>
+          <button class="btn js-startTimer">ça cuit !</button>
+        </div>
+      </div>
+  </div>
+{% endmacro %}
+
+<!--____________________->
+      SPORT
+<-______________________-->
+{% macro card_content__sport(sport) %}
+  {# Parent: .card__content #}
+  {# HEADER #}
+  <div class="content__header">
+    <div class="content__header-container">
+      <img src="./src/img/sport/{{sport.exercice_slug}}.svg" alt="">
+      <div class="content__header-title-container">
+        <span class="content__header-title ff-title">{{sport.exercice_name}}</span>
+        <span class="content__header-time"><img src="./src/img/svg/clock.svg" alt="">{{30|date('i:s')}}</span>
+      </div>
+    </div>
+  </div>
+  {# CONTENT #}
+  <div class="content__content">
+    {# RIGHT #}
+    <div class="content__right">
+      <h3 class="content__title ff-title">Muscles</h3>
+      <div class="content__list">
+        <img src="./src/img/sport/body.svg" alt=" " class="svg">
+      </div>
+    </div>
+    {# LEFT #}
+    <div class="content__left">
+      <h3 class="content__title ff-title">Exercices</h3>
+      <ul class="content__list bg-lines">
+        {% for etape in sport.exercice_step %}
+          <li class="content__list_item">{{etape}}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {# FOOTER #}
+  <div class="content__footer">
+      <h3 class="footer__title ff-title">Minuteur</h3>
+      <div class="content__footer-container">
+        <img src="./src/img/sport/minuteur.svg" class="svg minuteur-icon minuteur--sport" alt="">
+        <div class="content__footer-title-container">
+          <span class="content__footer-title">{{sport.recette_minuteur|date('i:s')}}</span>
+          <span class="content__footer-time">{{minuteur_result|date('G:i:s')}}</span>
+          <button class="btn js-startTimer">Start</button>
+        </div>
+      </div>
+  </div>
+{% endmacro %}
+
+<!--____________________->
+      WORK
+<-______________________-->
+{% macro card_content__work(type, journee) %}
+{{diffH}}
+  {% if type == "work" %}
+    {% set t = {
+      name: 'work',
+      icon: 'workGuy.svg',
+      title: 'Travail',
+      duration: '9h00 - 17h30',
+      list: [
+      {
+        title: "Liens",
+        links: [
+          {
+            title: "Teamweek",
+            url: "https://app.teamweek.com/#timeline/242387/groups/190359?zoom=week",
+            icon: "",
+          },
+          {
+            title: "Gmail",
+            url: "https://mail.google.com/mail/u/2/",
+            icon: "",
+          },
+          {
+            title: "InVision",
+            url: "https://projects.invisionapp.com/d/main#/projects",
+            icon: "",
+          },
+          {
+            title: "Papaly",
+            url: "https://papaly.com/",
+            icon: "",
+          },
+        ]
+      },
+      {
+        title: "Localhost",
+        links: [
+          {
+            title: "Vivescia",
+            url: "localhost:8080",
+            icon: "",
+          },
+        ]
+      }
+    ]
+    } %}
+  {% else %}
+    {% set t = {
+      name: type,
+      icon: type ~ '.svg',
+      title: 'Rien de prévu !',
+      list: [
+        {
+          title: "Liens",
+          links: [
+            {
+              title: "Teamweek",
+              url: "https://app.teamweek.com/#timeline/242387/groups/190359?zoom=week",
+              icon: "",
+            },
+            {
+              title: "Gmail",
+              url: "https://mail.google.com/mail/u/2/",
+              icon: "",
+            },
+            {
+              title: "InVision",
+              url: "https://projects.invisionapp.com/d/main#/projects",
+              icon: "",
+            },
+            {
+              title: "Papaly",
+              url: "https://papaly.com/",
+              icon: "",
+            },
+          ]
+        },
+        {
+          title: "Localhost",
+          links: [
+            {
+              title: "Vivescia",
+              url: "localhost:8080",
+              icon: "",
+            },
+          ]
+        }
+      ]
+    } %}
+  {% endif %}
+  
+  {# Parent: .card__content #}
+  {# HEADER #}
+  <div class="content__header">
+    <div class="content__header-container">
+      <img src="./src/img/{{t.name}}/{{t.icon}}" alt="">
+      <div class="content__header-title-container">
+        <span class="content__header-title ff-title">{{t.title}}</span>
+        {% if t.duration %}
+        <span class="content__header-time"><img src="./src/img/svg/clock.svg" alt="">{{t.duration}}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {# CONTENT #}
+  <div class="content__content">
+    {# LIST LINKS #}
+    {% for groupLinks in t.list %}
+      <div class="content__right w-100">
+        <h3 class="content__title ff-title">{{groupLinks.title}}</h3>
+        <ul class="content__list bg-lines">
+          {% for link in groupLinks.links %}
+            <li class="content__list_item">
+              <a target="_blank" href="{{link.url}}">{{link.title}}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+<!--____________________->
+      HOME
+<-______________________-->
+{% macro card_content__home() %}
+home (rien)
+{% endmacro %}
